@@ -11,7 +11,7 @@ services:
 
   db:
     build:
-      context: ./docker/db
+      context: ./db
     restart: always
     env_file:
       - ./.env
