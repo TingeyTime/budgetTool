@@ -1,0 +1,13 @@
+fastapi
+pandas
+pydantic
+# faker
+psycopg2-binary
+asyncpg
+# boto3
+ipython
+python-dotenv
+asyncio
+aioredis
+keyring
+uvicorn

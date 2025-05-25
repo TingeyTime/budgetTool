@@ -1,0 +1,52 @@
+version: '3.1'
+
+services:
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - budget_tool
+
+  db:
+    build:
+      context: ./docker/db
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      - budget_tool
+
+  api:
+    build:
+      context: ./api
+    container_name: api
+    ports:
+      - "${API_PORT}:8000"
+    environment:
+      - HOST=${API_HOST}
+      - PORT=${API_PORT}
+    networks:
+      - budget_tool
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "${FRONTEND_PORT}:8501"
+    depends_on:
+      - api
+    networks:
+      - budget_tool
+
+networks:
+  budget_tool:
+    driver: bridge
