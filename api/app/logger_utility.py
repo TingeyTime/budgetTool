@@ -1,13 +1,42 @@
-import time
-from fastapi import Request
-from app.logger_utility import get_my_logger
+import logging
+from enum import Enum
+from typing import List
 
-logger = get_my_logger("Middleware", [])
+from pydantic import BaseModel
 
 
-async def timer(request: Request, call_next):
-    start_time = time.time()
-    logger.info("Starting timer")
-    response = await call_next(request)
-    logger.info(f"Request took: {round((time.time() - start_time), 3)} seconds.")
-    return response
+class LoggingLevel(Enum):
+    """
+    Use with LoggingInfo Class to decide what level of logging you want
+    """
+    DEBUG = logging.DEBUG
+    INFO = logging.INFO
+    WARNING = logging.WARNING
+    ERROR = logging.ERROR
+    CRITICAL = logging.CRITICAL
+
+
+class LoggerInfo(BaseModel):
+    """
+    Logging Info class provides you way to log different thing differently
+    """
+    name: str
+    level: LoggingLevel
+
+
+def get_my_logger(my_logger, logging_infos: List[LoggerInfo] = None):
+    """
+
+    :param my_logger: name of logger
+    :param logging_infos: what you want to log
+    :return:
+    """
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(my_logger)
+    if logging_infos is None:
+        return logger
+
+    for li in logging_infos:
+        logging.getLogger(li.name).setLevel(li.level.value)
+
+    return logger

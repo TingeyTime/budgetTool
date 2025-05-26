@@ -11,3 +11,4 @@ asyncio
 aioredis
 keyring
 uvicorn
+dotenv

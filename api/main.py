@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.database.postgres.connections import get_postgres_pool
 from contextlib import asynccontextmanager
+from app.routers.categories import router as categories_router
 from app.middlewares import timer
 from app.logger_utility import get_my_logger
 
@@ -11,14 +13,23 @@ logger = get_my_logger("API", [])
 async def lifespan(app: FastAPI):
     logger.info("Application is starting up")
 
+    logger.info("Getting Postgres Database Connection.")
+    pg_pool = await get_postgres_pool()
+    app.state.pg_pool = pg_pool
+
     yield
 
     logger.info("Application is shutting down")
+
+    await app.state.pg_pool.close()
+    logger.info("Postgres Database connection pool closed.")
+
     return
 
 app = FastAPI(
     title="Budget Tool API",
     description="API for managing budget data and operations",
+    lifespan=lifespan,
     version="0.1.0",
 )
 
@@ -35,6 +46,12 @@ app.add_middleware(
 )
 
 app.middleware("https")(timer)
+
+app.include_router(
+    router=categories_router,
+    prefix="/categories",
+    tags=["Categories"],
+)
 
 @app.get("/")
 async def root():
