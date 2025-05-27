@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-from tools.api import get_root, get_categories
+from tools.api import get_accounts, get_transactions, get_budgets, get_categories
 
 
 # ---- Page configuration ----
@@ -15,21 +15,23 @@ st.set_page_config(
 st.title("Budget Tool")
 st.caption("A tool to help you manage your budget effectively.")
 
-# ---- Test Database Connection ----
-st.header("Test Database connection")
+# ---- Load data ----
+accounts_df = get_accounts()
+transactions_df = get_transactions()
+budgets_df = get_budgets()
+categories_df = get_categories()
 
-st.write("Testing connection to the API...")
-try:
-    root_response = get_root()
-    st.success(f"Connected to API: {root_response['message']}")
-except Exception as e:
-    st.error(f"Failed to connect to API: {e}")
+# ---- Metrics ----
+col1, col2, col3 = st.columns(3)
 
-st.write("Getting categories from the API...")
-try:
-    categories_response = get_categories()
-    st.success(f"Found {len(categories_response)} categories.")
-    categories_df = pd.DataFrame(categories_response)
-    st.dataframe(categories_df)
-except Exception as e:
-    st.error(f"Failed to get categories: {e}")
+with col1:
+    st.metric("Total Accounts", len(accounts_df), delta=None)
+
+with col2:
+    st.metric("Total Transactions", len(transactions_df), delta=None)
+
+with col3:
+    st.metric("Total Budgets", len(budgets_df), delta=None)
+
+# ---- Accounts Overview ----
+st.metric("Net Worth", f"${transactions_df['amount'].sum():,.2f}")

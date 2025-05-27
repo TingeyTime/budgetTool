@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database.postgres.connections import get_postgres_pool
 from contextlib import asynccontextmanager
 from app.routers.categories import router as categories_router
+from app.routers.data import router as data_router
 from app.middlewares import timer
 from app.logger_utility import get_my_logger
 
@@ -48,6 +49,11 @@ app.add_middleware(
 app.middleware("https")(timer)
 
 app.include_router(
+    router=data_router,
+    prefix="/data",
+    tags=["Data"],
+)
+app.include_router(
     router=categories_router,
     prefix="/categories",
     tags=["Categories"],
@@ -56,3 +62,11 @@ app.include_router(
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "message": "API is running smoothly."}
+
+@app.get("/version")
+async def version():
+    return {"version": "0.1.0", "description": "Budget Tool API"}
