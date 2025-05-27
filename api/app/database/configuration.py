@@ -6,7 +6,6 @@ logger = get_my_logger("Database Configuration Manager", [])
 
 class ConfigManager:
     def __init__(self) -> None:
-        # self.env = get_key("data", "env")
         self.env = "dev"
         logger.info(f"Configuration Manager will be using the {self.env} database.")
 
@@ -17,20 +16,18 @@ class ConfigManager:
 class PostgresDatabaseConfiguration:
     def __init__(self) -> None:
         c = ConfigManager()
-
-        self.database = c.get_secret(config = f"postgres", key="db")
-        self.host = c.get_secret(config = f"postgres", key="host")
-        self.port = c.get_secret(config = f"postgres", key="port")
-        self.username = c.get_secret(config = f"postgres", key="user")
-        self.password = c.get_secret(config = f"postgres", key="password")
+        self.database = get_key("postgres", "db")
+        self.host = c.get_secret(config="postgres", key="host")
+        self.port = c.get_secret(config="postgres", key="port")
+        self.user = c.get_secret(config="postgres", key="user")
+        self.password = c.get_secret(config="postgres", key="password")
 
     def get_config(self):
         return {
             "database": self.database,
-            # "host": self.host,
-            "host": "db",
+            "host": self.host,
             "port": self.port,
-            "username": self.username,
+            "user": self.user,
             "password": self.password,
         }
     

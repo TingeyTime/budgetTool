@@ -23,7 +23,7 @@ async def get_postgres_pool(minconn=1, maxconn=2, connect_timeout=1000):
         database= pg_config['database'],
         host = pg_config['host'],
         port = pg_config['port'],
-        user = pg_config['username'],
+        user = pg_config['user'],
         password = pg_config['password']
     )
 
