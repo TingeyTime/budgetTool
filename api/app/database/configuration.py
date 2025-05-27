@@ -27,7 +27,8 @@ class PostgresDatabaseConfiguration:
     def get_config(self):
         return {
             "database": self.database,
-            "host": self.host,
+            # "host": self.host,
+            "host": "db",
             "port": self.port,
             "username": self.username,
             "password": self.password,

@@ -13,6 +13,8 @@ async def get_postgres_pool(minconn=1, maxconn=2, connect_timeout=1000):
 
     pg_config = pg.get_config()
 
+    logger.info(f"Postgres Configuration: {pg_config}")
+
     logger.info("Creating Postgres Connection Pool")
     pool = await asyncpg.create_pool(
         min_size=minconn,
