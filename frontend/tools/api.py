@@ -19,6 +19,10 @@ def get_transactions() -> dict:
     response = requests.get(f"{api_url}/data/transactions")
     if response.status_code != 200:
         raise Exception(f"Failed to get transactions: {response.status_code} - {response.text}")
+    df = pd.DataFrame(response.json())
+    df['transaction_date'] = pd.to_datetime(df['transaction_date'])
+    df['amount'] = pd.to_numeric(df['amount'], errors='coerce')
+    return df.sort_values(by='transaction_date').reset_index(drop=True)
     return pd.DataFrame(response.json())
 
 @st.cache_data()

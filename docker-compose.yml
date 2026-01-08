@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   adminer:
@@ -18,6 +18,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    develop:
+      watch:
+        - action: rebuild
+          path: ./db
     env_file:
       - ./.env
     environment:
@@ -35,6 +39,10 @@ services:
     container_name: api
     ports:
       - "${API_PORT}:8000"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./api
     environment:
       HOST: ${API_HOST}
       PORT: ${API_PORT}
@@ -53,6 +61,10 @@ services:
     build:
       context: ./frontend
     container_name: frontend
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend
     env_file:
       - ./.env
     ports:

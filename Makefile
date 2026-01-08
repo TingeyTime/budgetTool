@@ -10,4 +10,4 @@ all:
 	$(MAKE) -j2 api frontend
 
 preview:
-	-docker-compose up --build
+	-docker-compose up --watch
